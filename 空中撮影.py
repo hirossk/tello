@@ -1,11 +1,10 @@
 import socket
 import threading
 import cv2
-import time
+from time import sleep 
 import numpy as np
 
 
-# データ受け取り用の関数
 def udp_receiver():
         global battery_text
         global time_text
@@ -33,13 +32,13 @@ def ask():
             sent = sock.sendto('battery?'.encode(encoding="utf-8"), TELLO_ADDRESS)
         except:
             pass
-        time.sleep(0.5)
+        sleep(0.5)
 
         try:
             sent = sock.sendto('time?'.encode(encoding="utf-8"), TELLO_ADDRESS)
         except:
             pass
-        time.sleep(0.5)
+        sleep(0.5)
 
 
 # 離陸
@@ -116,6 +115,8 @@ def speed20():
         except:
             pass
 
+
+
 # Tello側のローカルIPアドレス(デフォルト)、宛先ポート番号(コマンドモード用)
 TELLO_IP = '192.168.10.1'
 TELLO_PORT = 8889
@@ -155,12 +156,12 @@ recv_thread.start()
 # コマンドモード
 sock.sendto('command'.encode('utf-8'), TELLO_ADDRESS)
 
-time.sleep(1)
+sleep(1)
 
 # カメラ映像のストリーミング開始
 sock.sendto('streamon'.encode('utf-8'), TELLO_ADDRESS)
 
-time.sleep(1)
+sleep(1)
 
 if cap is None:
     cap = cv2.VideoCapture(TELLO_CAMERA_ADDRESS)
@@ -168,7 +169,26 @@ if cap is None:
 if not cap.isOpened():
     cap.open(TELLO_CAMERA_ADDRESS)
 
-time.sleep(1)
+sleep(1)
+
+command=[
+    [takeoff,"TAKEOFF"],
+    [land,"LAND"],
+    [None,"None"],
+]
+# [forward,"FORWARD"],
+# [back,"BACK"],
+# [left,"LEFT"],
+# [right,"RIGHT"],
+# [up,"UP"],
+# [down,"DOWN"],
+# [cw,"CW"],
+# [ccw,"CCW"],
+# [speed20,"LOW SPEED"],
+# [speed40,"HIGH SPEED"],
+
+
+com_cnt = 0
 
 while True:
     ret, frame = cap.read()
@@ -220,6 +240,14 @@ while True:
     # カメラ映像を画面に表示
     cv2.imshow('Tello Camera View', frame2)
 
+    com_cnt = com_cnt + 1
+
+    if command[com_cnt][0] is not None :
+        command[com_cnt][0]()
+        command_text = command[com_cnt][1]
+        sleep(10)
+    else:
+        break
     # キー入力を取得
     key = cv2.waitKey(1)
 
