@@ -172,27 +172,6 @@ if not cap.isOpened():
 
 sleep(1)
 
-command=[
-    [takeoff,"TAKEOFF"],
-    [back,"BACK"],
-    [land,"LAND"],
-    [None,"None"],
-]
-# [forward,"FORWARD"],
-# [back,"BACK"],
-# [left,"LEFT"],
-# [right,"RIGHT"],
-# [up,"UP"],
-# [down,"DOWN"],
-# [cw,"CW"],
-# [ccw,"CCW"],
-# [speed20,"LOW SPEED"],
-# [speed40,"HIGH SPEED"],
-
-
-com_cnt = 0
-prev_time = perf_counter()
-
 while True:
     ret, frame = cap.read()
 
@@ -242,15 +221,61 @@ while True:
             lineType=cv2.LINE_4)
     # カメラ映像を画面に表示
     cv2.imshow('Tello Camera View', frame2)
+
+    # キー入力を取得
     key = cv2.waitKey(1)
 
-    if perf_counter() - prev_time > 10 and command[com_cnt][0] is not None :
-        command[com_cnt][0]()
-        command_text = command[com_cnt][1]
-        prev_time = perf_counter()
-        com_cnt = com_cnt + 1
-    elif command[com_cnt][0] is None:
+    # qキーで終了
+    if key == ord('q'):
         break
+    # ↑キーで前進
+    elif key == 2490368:
+        forward()
+        command_text = "Forward"
+    # ↓キーで後進
+    elif key == 2621440:
+        back()
+        command_text = "Back"
+    # ←キーで左進
+    elif key == 2424832:
+        left()
+        command_text = "Left"
+    # →キーで右進
+    elif key == 2555904:
+        right()
+        command_text = "Right"
+    # jキーで離陸
+    elif key == ord('j'):
+        takeoff()
+        command_text = "Take off"
+    # kキーで着陸
+    elif key == ord('k'):
+        land()
+        command_text = "Land"
+    # hキーで上昇
+    elif key == ord('h'):
+        up()
+        command_text = "Up"
+    # lキーで下降
+    elif key == ord('l'):
+        down()
+        command_text = "Down"
+    # uキーで左回りに回転
+    elif key == ord('u'):
+        ccw()
+        command_text = "Ccw"
+    # iキーで右回りに回転
+    elif key == ord('i'):
+        cw()
+        command_text = "Cw"
+    # nキーで低速モード
+    elif key == ord('n'):
+        speed20()
+        command_text = "Low speed"
+    # mキーで高速モード
+    elif key == ord('m'):
+        speed40()
+        command_text = "High speed"
 
 cap.release()
 cv2.destroyAllWindows()
