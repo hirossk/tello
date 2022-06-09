@@ -229,19 +229,19 @@ while True:
     if key == ord('q'):
         break
     # ↑キーで前進
-    elif key == 2490368:
+    elif key == ord('8'):
         forward()
         command_text = "Forward"
     # ↓キーで後進
-    elif key == 2621440:
+    elif key == ord('2'):
         back()
         command_text = "Back"
     # ←キーで左進
-    elif key == 2424832:
+    elif key == ord('4'):
         left()
         command_text = "Left"
     # →キーで右進
-    elif key == 2555904:
+    elif key == ord('6'):
         right()
         command_text = "Right"
     # jキーで離陸
